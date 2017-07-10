@@ -143,4 +143,4 @@ if [ ! -z "$CERTBOT_AUTH_OUTPUT" ]; then
   fi
 fi
 
-# vim: et:ts=2:sw=2:tw=2:
+# vim: et:ts=2:sw=2:
