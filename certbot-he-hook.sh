@@ -24,6 +24,7 @@ if [ -z "$CERTBOT_DOMAIN" ] || [ -z "$CERTBOT_VALIDATION" ]; then
     HE_USER=<username> HE_PASS=<password> certbot renew \\
       --preferred-challenges dns \\
       --manual-auth-hook /path/to/certbot-he-hook.sh  \\
+      --manual-cleanup-hook /path/to/certbot-he-hook.sh  \\
       --manual-public-ip-logging-ok
 
   2) Create a new certificate for a domain:
@@ -33,6 +34,7 @@ if [ -z "$CERTBOT_DOMAIN" ] || [ -z "$CERTBOT_VALIDATION" ]; then
       --email your@email.com \\
       --manual \\
       --manual-auth-hook /path/to/certbot-he-hook.sh  \\
+      --manual-cleanup-hook /path/to/certbot-he-hook.sh  \\
       --manual-public-ip-logging-ok \\
       --domain <requested.domain.com>
 
