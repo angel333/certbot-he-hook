@@ -78,7 +78,7 @@ fi
 ## Finding the zone id #################################################
 
 ZONENAME_REGEX=$( \
-  echo $CERTBOT_DOMAIN | awk -F '.' '{ print $(NF-1) "\\." $NF }' \
+  echo $CERTBOT_DOMAIN | awk '{gsub(/\./,"\\.");}1' \
 )
 HE_ZONEID=$( \
   curl -L --silent --show-error --cookie "$HE_COOKIE" \
