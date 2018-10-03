@@ -77,15 +77,46 @@ fi
 
 ## Finding the zone id #################################################
 
-ZONENAME_REGEX=$( \
-  echo $CERTBOT_DOMAIN | awk -F '.' '{ print $(NF-1) "\\." $NF }' \
-)
-HE_ZONEID=$( \
+MATCHES=$(
   curl -L --silent --show-error --cookie "$HE_COOKIE" \
     "https://dns.he.net/" \
-  | grep -Eo "delete_dom.*name=\"$ZONENAME_REGEX\" value=\"[0-9]+" \
-  | grep -Eo "[0-9]+$" \
+  | grep -Eo "delete_dom.*name=\"[^\"]+\" value=\"[0-9]+"
 )
+
+# Zone names and zone IDs are in same order
+ZONE_IDS=$(echo "$MATCHES" | cut -d '"' -f 5)
+ZONE_NAMES=$(echo "$MATCHES" | cut -d '"' -f 3)
+
+STRIP_COUNTER=1
+
+# Walk through all possible zone names
+while true; do
+  ATTEMPTED_ZONE=$(echo "$CERTBOT_DOMAIN" | cut -d . -f ${STRIP_COUNTER}-)
+
+  # All possible zone names have been tried
+  if [ -z "$ATTEMPTED_ZONE" ]; then
+    echo "No zone for domain \"$DOMAIN\" found." 1>&2
+    return 1
+  fi
+
+  # Take care of "." and only match whole lines. Note that grep -F
+  # cannot be used because there's no way to make it match whole
+  # lines.
+  REGEX="^$(echo "$ATTEMPTED_ZONE" | sed 's/\./\\./g')$"
+  LINE_NUM=$(echo "$ZONE_NAMES" \
+    | grep -n "$REGEX" \
+    | cut -d : -f 1
+  )
+
+  if [ -n "$LINE_NUM" ]; then
+    HE_ZONEID=$(echo "$ZONE_IDS" | sed "${LINE_NUM}q;d")
+    # $ATTEMPTED_ZONE has zone $ZONE_ID and will be used for $CERTBOT_DOMAIN.
+    break
+  fi
+
+  STRIP_COUNTER=$(expr $STRIP_COUNTER + 1)
+
+done
 
 
 ## Add the validation record ###########################################
