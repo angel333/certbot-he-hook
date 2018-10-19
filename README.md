@@ -4,18 +4,9 @@ With this script, domains that are hosted at the Hurricane Electric DNS service 
  
 ## Example usage:
 
-1. Renew certificates for all domains:
-        
-       HE_USER=<username> HE_PASS=<password> certbot renew \
-         --preferred-challenges dns \
-         --manual-auth-hook /path/to/certbot-he-hook.sh  \
-         --manual-cleanup-hook /path/to/certbot-he-hook.sh  \
-         --manual-public-ip-logging-ok
-      
-      
-2. Create a new certificate for a domain:
+1. Create a new certificate for a domain:
 
-       HE_SESSID=<session_id> certbot certonly \
+       HE_USER=<username> HE_PASS=<password> certbot certonly \
          --preferred-challenges dns \
          --email your@email.com \
          --manual \
@@ -23,6 +14,16 @@ With this script, domains that are hosted at the Hurricane Electric DNS service 
          --manual-cleanup-hook /path/to/certbot-he-hook.sh  \
          --manual-public-ip-logging-ok \
          --domain <requested.domain.com>
+
+2. Renew certificates for all domains:
+        
+       HE_USER=<username> HE_PASS=<password> certbot renew \
+         --preferred-challenges dns \
+         --manual-auth-hook /path/to/certbot-he-hook.sh  \
+         --manual-cleanup-hook /path/to/certbot-he-hook.sh  \
+         --manual-public-ip-logging-ok
+
+Alternatively, instead of supplying `HE_USER` and `HE_PASS`, a session ID can be passed through `HE_SESSID`. Supplying a session ID is a bit faster.
 
 ## Bugs
 
