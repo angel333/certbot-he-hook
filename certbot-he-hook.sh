@@ -64,7 +64,7 @@ if [ -n "$HE_USER" ] && [ -n "$HE_PASS" ]; then
     "https://dns.he.net/" \
     > /dev/null
 elif [ -n "$HE_SESSID" ]; then
-  HE_COOKIE="--cookie CGISESSID=${HE_SESSID}"
+  HE_COOKIE="CGISESSID=${HE_SESSID}"
 else
   echo
     'No auth details provided. Please provide either session id (' \
