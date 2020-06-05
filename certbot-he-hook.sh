@@ -56,7 +56,8 @@ if [ -n "$HE_USER" ] && [ -n "$HE_PASS" ]; then
   HE_COOKIE=$( \
     curl -L --silent --show-error -I "https://dns.he.net/" \
       | grep '^Set-Cookie:' \
-      | grep -Eo 'CGISESSID=[a-z0-9]*')
+      | cut -c 13- \
+      | cut -d\; -f 1)
   # Attempt login
   curl -L --silent --show-error --cookie "$HE_COOKIE" \
     --form "email=${HE_USER}" \
