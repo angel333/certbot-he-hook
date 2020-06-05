@@ -95,7 +95,7 @@ while true; do
 
   # All possible zone names have been tried
   if [ -z "$ATTEMPTED_ZONE" ]; then
-    echo "No zone for domain \"$DOMAIN\" found." 1>&2
+    echo "No zone for domain \"$CERTBOT_DOMAIN\" found." 1>&2
     return 1
   fi
 
