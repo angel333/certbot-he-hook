@@ -4,6 +4,7 @@
 ## Help ################################################################
 
 if [ -z "$CERTBOT_DOMAIN" ] || [ -z "$CERTBOT_VALIDATION" ]; then
+  SCRIPT_PATH="$(realpath "$0")"
   cat <<HELP
 
  == Certbot hook for Hurricane Electric DNS service ===========================
@@ -22,20 +23,20 @@ if [ -z "$CERTBOT_DOMAIN" ] || [ -z "$CERTBOT_VALIDATION" ]; then
   1) Create a new certificate for a domain:
   
      HE_USER=<username> HE_PASS=<password> certbot certonly \\
+       --agree-tos \\
        --preferred-challenges dns \\
-       --email your@email.com \\
        --manual \\
-       --manual-auth-hook /path/to/certbot-he-hook.sh  \\
-       --manual-cleanup-hook /path/to/certbot-he-hook.sh  \\
+       --manual-auth-hook $SCRIPT_PATH  \\
+       --manual-cleanup-hook $SCRIPT_PATH  \\
        --manual-public-ip-logging-ok \\
-       --domain <requested.domain.com>
+       -d <requested.domain.com> -m your@email.com 
   
   2) Renew certificates for all domains:
           
      HE_USER=<username> HE_PASS=<password> certbot renew \\
        --preferred-challenges dns \\
-       --manual-auth-hook /path/to/certbot-he-hook.sh  \\
-       --manual-cleanup-hook /path/to/certbot-he-hook.sh  \\
+       --manual-auth-hook $SCRIPT_PATH  \\
+       --manual-cleanup-hook $SCRIPT_PATH  \\
        --manual-public-ip-logging-ok
 
  --
@@ -56,7 +57,7 @@ if [ -n "$HE_USER" ] && [ -n "$HE_PASS" ]; then
   HE_COOKIE=$( \
     curl -L --silent --show-error -I "https://dns.he.net/" \
       | grep '^Set-Cookie:' \
-      | grep -Eo 'CGISESSID=[a-z0-9]*')
+      | grep -Eo '[a-z0-9]+=[a-z0-9]+')
   # Attempt login
   curl -L --silent --show-error --cookie "$HE_COOKIE" \
     --form "email=${HE_USER}" \
